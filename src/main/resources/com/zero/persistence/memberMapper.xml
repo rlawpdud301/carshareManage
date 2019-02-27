@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zero.persistence.MemberMapper">
+	<select id="selectMemberApply"
+		resultType="com.zero.domain.MemberVO">
+		SELECT member_no, kakao_id, naver_id, name, u_intro,
+		d_intro, phone, nickname, photo, jop, driver, jumin, grade_no, my_fee,
+		email, dirver_enrollment, dirver_apply
+		FROM carshare.`member`
+		WHERE dirver_enrollment is null and dirver_apply is not null;
+	</select>
+	<update id="updateDriver">
+		UPDATE carshare.`member`
+		SET driver = true,dirver_enrollment = now()
+		WHERE member_no= #{memberNo}
+	</update>
+</mapper>
