@@ -7,11 +7,19 @@
 		d_intro, phone, nickname, photo, jop, driver, jumin, grade_no, my_fee,
 		email, dirver_enrollment, dirver_apply
 		FROM carshare.`member`
-		WHERE dirver_enrollment is null and dirver_apply is not null;
+		WHERE
+		dirver_enrollment is null and dirver_apply is not null;
 	</select>
 	<update id="updateDriver">
 		UPDATE carshare.`member`
-		SET driver = true,dirver_enrollment = now()
+		SET driver =
+		true,dirver_enrollment = now()
 		WHERE member_no= #{memberNo}
+	</update>
+	<update id="deleteDriver">
+		UPDATE carshare.`member`
+		SET d_intro=null, driver=false, grade_no=null,
+		my_fee=0, dirver_enrollment=null, dirver_apply=null
+		WHERE member_no=#{memberNo}
 	</update>
 </mapper>

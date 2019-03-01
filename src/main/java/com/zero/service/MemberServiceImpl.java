@@ -77,6 +77,31 @@ public class MemberServiceImpl implements MemberService {
 		
 	}
 
+
+
+	@Override
+	public void removedriverInfo(int memberNo) {
+		// TODO Auto-generated method stub
+		SqlSession sqlSession = MyBatisSqlSessionFactory.openSession();
+		int res = 0;
+		try {
+			res += sqlSession.update("com.zero.persistence.MemberMapper.deleteDriver",memberNo);
+			res += sqlSession.delete("com.zero.persistence.CarInfoMapper.deletecarInfo",memberNo );
+			res += sqlSession.delete("com.zero.persistence.LicenseInfoMapper.deleteLicenseInfo",memberNo);			
+			if(res == 3){
+				sqlSession.commit();
+			}else{
+				throw new Exception();
+			}
+		} catch (Exception e) {
+			sqlSession.rollback();
+			throw new RuntimeException(e.getCause());
+		} finally {
+			sqlSession.close();
+		}
+		return;
+	}
+
 	
 
 }

@@ -21,8 +21,16 @@
 
 	<update id="updateLicenseInfo">
 		UPDATE carshare.license_info
-		SET license_no=#{licenseNo}, license_kind=#{licenseKind}, birthday=#{birthday},
-		deadline=#{deadline}, certification_no=#{certificationNo}
-		WHERE member_no=#{memberNo.memberNo}
+		SET
+		license_no=#{licenseNo}, license_kind=#{licenseKind},
+		birthday=#{birthday},
+		deadline=#{deadline},
+		certification_no=#{certificationNo}
+		WHERE
+		member_no=#{memberNo.memberNo}
 	</update>
+	<delete id="deleteLicenseInfo">
+		DELETE FROM carshare.license_info
+		WHERE member_no=#{memberNo}
+	</delete>
 </mapper>

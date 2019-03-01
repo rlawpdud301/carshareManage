@@ -17,6 +17,7 @@ import com.zero.service.MemberServiceImpl;
 import java.awt.GridLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -62,6 +63,7 @@ public class DriverManagementUI extends JFrame implements ActionListener{
 	private MemberVO memberVO;
 	private JButton btn_no;
 	private JButton btn_ok;
+	private JButton btn_reload;
 
 	/**
 	 * Launch the application.
@@ -149,6 +151,10 @@ public class DriverManagementUI extends JFrame implements ActionListener{
 
 		btn_ok = new JButton("\uC2B9\uC778");
 		btn_ok.addActionListener(this);
+		
+		btn_reload = new JButton("\uBAA9\uB85D \uC0C8\uACE0\uACE0\uCE68");
+		btn_reload.addActionListener(this);
+		panel_3.add(btn_reload);
 		panel_3.add(btn_ok);
 
 		btn_no = new JButton("\uAC70\uC808");
@@ -164,8 +170,17 @@ public class DriverManagementUI extends JFrame implements ActionListener{
 		if (e.getSource() == btn_no) {
 			do_btn_no_actionPerformed(e);
 		}
+		if (e.getSource() == btn_reload) {
+			do_btn_reload_actionPerformed(e);
+		}
 	}
 	
+	private void do_btn_reload_actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		list = service.selectMemberApply();
+		applyMemberJPanel.setList(list);
+	}
+
 	private void do_btn_no_actionPerformed(ActionEvent e) {
 		if ((lbl_memberNo.getText().trim()).equals("")) {
 			JOptionPane.showMessageDialog(null, "거절하실 사용자를 선택해주세요");
@@ -177,10 +192,44 @@ public class DriverManagementUI extends JFrame implements ActionListener{
 			return;
 		}
 		
-		
-        String body = "죄송합니다. 다음과같은이유로 승인이힘듭니다." +ans;       // 메일 내용
+		try {
+			
+			lbl_memberNo.setText("");
+			lbl_name.setText("");
+			carInfoJPanel.setNull();
+			licenseInfoJPanel.setNull();
+	        String body = "죄송합니다. 다음과같은이유로 승인이힘듭니다." +ans;       // 메일 내용
 
-        sendFromGMail(body);
+	        sendFromGMail(body);
+	        /*JOptionPane.showMessageDialog(null, "거절완료");*/
+	        
+	        Map<String, Object> map = service.DriverApplyInfo(memberVO.getMemberNo());
+	        CarInfoVO carInfoVO = (CarInfoVO) map.get("CarInfoVO");
+	        LicenseInfoVO licenseInfoVO = (LicenseInfoVO) map.get("LicenseInfoVO");
+	        
+	        /*String documentUpload = "c:/zzz/documentUpload";
+			documentUpload = documentUpload + "/" + memberVO.getName();*/
+	        System.out.println(licenseInfoVO.getLicensePhoto());
+	        System.out.println(carInfoVO.getCarCard());
+	        System.out.println(carInfoVO.getInsuranceCard());
+			File licensePhotoFile = new File(licenseInfoVO.getLicensePhoto());
+			File carCardFile = new File(carInfoVO.getCarCard());
+			File insuranceCardFile = new File(carInfoVO.getInsuranceCard());
+			carCardFile.delete();
+			licensePhotoFile.delete();
+			insuranceCardFile.delete();
+	        
+			
+			service.removedriverInfo(memberVO.getMemberNo());
+	        
+	        list = service.selectMemberApply();
+			applyMemberJPanel.setList(list);
+		} catch (Exception e2) {
+			// TODO: handle exception
+			
+			JOptionPane.showMessageDialog(null, "오류발생");
+		}
+		
 		
 	}
 
@@ -197,19 +246,25 @@ public class DriverManagementUI extends JFrame implements ActionListener{
 				return;
 			}
 
-			carInfoVO.setMemberNo(memberVO);
-			licenseInfoVO.setMemberNo(memberVO);
-			service.driverInfo(carInfoVO, licenseInfoVO);
-			list = service.selectMemberApply();
-			applyMemberJPanel.setList(list);
-			JOptionPane.showMessageDialog(null, "등록 완료");
-			lbl_memberNo.setText("");
-			lbl_name.setText("");
-			carInfoJPanel.setNull();
-			licenseInfoJPanel.setNull();
-			String body = "승인이 완료되었습니다. 기다려주셔서 감사합니다. 지금부터 드라이버로활동이 가능합니다. 즐겁고 안전한 드라이브되세요";       // 메일 내용
-	        sendFromGMail(body);
-		
+			try {
+				carInfoVO.setMemberNo(memberVO);
+				licenseInfoVO.setMemberNo(memberVO);
+				service.driverInfo(carInfoVO, licenseInfoVO);
+				list = service.selectMemberApply();
+				applyMemberJPanel.setList(list);
+				JOptionPane.showMessageDialog(null, "등록 완료");
+				lbl_memberNo.setText("");
+				lbl_name.setText("");
+				carInfoJPanel.setNull();
+				licenseInfoJPanel.setNull();
+				String body = "승인이 완료되었습니다. 기다려주셔서 감사합니다. 지금부터 드라이버로활동이 가능합니다. 즐겁고 안전한 드라이브되세요";       // 메일 내용
+		        sendFromGMail(body);
+		        JOptionPane.showMessageDialog(null, "등록완료");
+			} catch (Exception e2) {
+				// TODO: handle exception
+				JOptionPane.showMessageDialog(null, "등록중 오류발생");
+			}
+			
 		
 	}
 

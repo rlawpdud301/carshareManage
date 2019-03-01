@@ -15,7 +15,7 @@
 		car_card
 		FROM carshare.car_info
 		WHERE member_no = #{memberNo} AND
-		car_name = ''
+		car_name  is null
 	</select>
 
 	<update id="updatecarInfo">
@@ -27,4 +27,8 @@
 		WHERE
 		member_no=#{memberNo.memberNo}
 	</update>
+	<delete id="deletecarInfo">
+		DELETE FROM carshare.car_info
+		WHERE member_no=#{memberNo} AND car_name is null
+	</delete>
 </mapper>

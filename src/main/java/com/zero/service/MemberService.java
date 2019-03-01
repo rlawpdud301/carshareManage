@@ -11,4 +11,5 @@ public interface MemberService {
 	List<MemberVO> selectMemberApply();
 	Map<String, Object> DriverApplyInfo(int memberNo);
 	void driverInfo(CarInfoVO carInfoVO, LicenseInfoVO licenseInfoVO);
+	void removedriverInfo(int memberNo);
 }
